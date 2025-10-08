@@ -1,0 +1,81 @@
+# Project Setup Guide
+
+1. Set up environment variables
+Copy the example `.env` file and update values:
+```bash
+# macOS/Linux
+cp .env.example .env
+
+# Windows CMD
+copy .env.example .env
+```
+
+**Update .env with your database credentials:**
+
+POSTGRES_USER=your_db_user
+POSTGRES_PASSWORD=strong_secret_password
+POSTGRES_DB=shikshak_db
+
+2. Start Docker containers
+```bash
+docker-compose up -d
+```
+This starts PostgreSQL and any other services defined in ```docker-compose.yml```.
+
+3. Backup the database
+```bash
+# Linux/macOS
+docker exec -t shikshak_db pg_dump -U $POSTGRES_USER $POSTGRES_DB > backup.sql
+
+#Windows (PowerShell)
+docker exec -t shikshak_db pg_dump -U $env:POSTGRES_USER $env:POSTGRES_DB > backup.sql
+```
+*Tip: Use ```stop_with_backup.sh``` (Linux/macOS) or ```Stop-With-Backup.ps1``` (Windows) for automatic timestamped backups and container shutdown.*
+
+4. Restore the database
+```bash
+#Linux/macOS
+cat backup.sql | docker exec -i shikshak_db psql -U $POSTGRES_USER -d $POSTGRES_DB
+
+#Windows (PowerShell)
+Get-Content .\backup.sql | docker exec -i shikshak_db psql -U $env:POSTGRES_USER -d $env:POSTGRES_DB
+```
+
+5. Stop containers
+- Stop containers without deleting volumes (data persists):
+```bash
+docker-compose down
+```
+- Stop containers and delete volumes (data removed):
+```bash
+docker-compose down -v
+```
+
+6. Navigate into backend folder
+```bash
+cd backend
+```
+
+**Create and activate virtual environment**
+```bash
+# macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+
+# Windows PowerShell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+7. Notes
+- All database backups are stored in the ```backups/``` folder with timestamps.
+- Use ```.env``` for credentials; do not commit sensitive passwords.
+- The ```stop_with_backup.sh``` / ```Stop-With-Backup.ps1``` scripts automate backup and container shutdown.
+- For restoring a specific backup, replace ```backup.sql``` with the timestamped backup filename.
+
+
+If when running ```alembic revision --autogenerate``` any problems arise, do:
+```
+netstat -ano | findstr "5432"
+```
+& kill processes which are not docker(there should only be one)

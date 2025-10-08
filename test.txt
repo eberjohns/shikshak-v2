@@ -1,0 +1,13 @@
+{
+  "email": "teacher@mail.com",
+  "full_name": "Teacher D",
+  "password": "teach",
+  "role": "teacher"
+}
+
+{
+  "email": "student@mail.com",
+  "full_name": "Student D",
+  "password": "stud",
+  "role": "student"
+}
