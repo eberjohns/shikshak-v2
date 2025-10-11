@@ -5,12 +5,42 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.answer import Answer, AnswerCreate
+from app.schemas.user import UserPublic # Import this
 
-# Schema for the request body when a student submits an exam
+# --- New Schema for the Teacher's Dashboard ---
+
+class SubmissionForTeacher(BaseModel):
+    id: uuid.UUID
+    submitted_at: datetime
+    overall_score: Optional[float] = None
+    student: UserPublic # Nest the student's public info
+
+    class Config:
+        from_attributes = True
+
+# --- Existing Summary Schemas for the List View ---
+
+class ExamSummary(BaseModel):
+    id: uuid.UUID
+    title: str
+
+    class Config:
+        from_attributes = True
+
+class SubmissionSummary(BaseModel):
+    id: uuid.UUID
+    submitted_at: datetime
+    overall_score: Optional[float] = None
+    exam: ExamSummary
+
+    class Config:
+        from_attributes = True
+
+# --- Existing Detailed Schemas ---
+
 class SubmissionCreate(BaseModel):
     answers: List[AnswerCreate]
 
-# Schema for returning a created submission to the client
 class Submission(BaseModel):
     id: uuid.UUID
     submitted_at: datetime

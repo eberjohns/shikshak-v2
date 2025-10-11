@@ -1,11 +1,12 @@
 # app/services/course_service.py
 
 from sqlalchemy.orm import Session, joinedload
+from uuid import UUID
+
 from app.models.user import User
 from app.models.course import Course
 from app.models.schedule import CourseSchedule
 from app.schemas.course import CourseCreate
-import uuid
 
 # --- Student-Focused Functions ---
 
@@ -15,7 +16,7 @@ def get_all_courses(db: Session) -> list[Course]:
     """
     return db.query(Course).options(joinedload(Course.teacher)).all()
 
-def get_course_by_id(db: Session, course_id: uuid.UUID) -> Course | None:
+def get_course_by_id(db: Session, course_id: UUID) -> Course | None:
     """
     Retrieves a single course by its ID.
     """
@@ -25,17 +26,16 @@ def enroll_student_in_course(db: Session, *, student: User, course: Course) -> C
     """
     Appends a student to a course's enrollment list and saves to the DB.
     """
-    course.students_enrolled.append(student)
-    db.add(course)
+    student.courses_enrolled.append(course)
+    db.add(student)
     db.commit()
     db.refresh(course)
     return course
 
-def get_courses_by_student(db: Session, *, student_id: uuid.UUID) -> list[Course]:
+def get_courses_by_student(db: Session, *, student_id: UUID) -> list[Course]:
     """
     Retrieves all courses a specific student is enrolled in.
     """
-
     student = db.query(User).options(
         joinedload(User.courses_enrolled).joinedload(Course.teacher)
     ).filter(User.id == student_id).first()
@@ -44,36 +44,24 @@ def get_courses_by_student(db: Session, *, student_id: uuid.UUID) -> list[Course
         return []
     return student.courses_enrolled
 
-# This is the new function
-def get_enrolled_course_details(db: Session, *, course_id: uuid.UUID, student_id: uuid.UUID) -> Course | None:
-    """
-    Retrieves a single course's details, but only if the specified student is enrolled.
-    This is a crucial security check.
-    """
-    course = db.query(Course).options(
-        joinedload(Course.teacher),
-        joinedload(Course.schedule),
-        joinedload(Course.students_enrolled) # Eager load students for the check
-    ).filter(Course.id == course_id).first()
-    
-    if not course:
-        return None
-
-    # Check if the student's ID is in the list of enrolled student IDs
-    is_enrolled = any(student.id == student_id for student in course.students_enrolled)
-
-    if not is_enrolled:
-        return None # Return None if the student is not enrolled
-
-    return course
-
 # --- Teacher-Focused Functions ---
 
-def get_courses_by_teacher(db: Session, *, teacher_id: uuid.UUID) -> list[Course]:
+def get_courses_by_teacher(db: Session, *, teacher_id: UUID) -> list[Course]:
     """
     Retrieves all courses taught by a specific teacher.
     """
     return db.query(Course).options(joinedload(Course.teacher)).filter(Course.teacher_id == teacher_id).all()
+
+def get_course_by_id_and_teacher(db: Session, *, course_id: UUID, teacher_id: UUID) -> Course | None:
+    """
+    Retrieves a single course by its ID, but only if it belongs to the specified teacher.
+    """
+    return (
+        db.query(Course)
+        .options(joinedload(Course.schedule)) # Eager load the schedule
+        .filter(Course.id == course_id, Course.teacher_id == teacher_id)
+        .first()
+    )
 
 def create_course_with_schedule(
     db: Session, *, course_in: CourseCreate, teacher: User, schedule_data: list[dict]
@@ -97,4 +85,3 @@ def create_course_with_schedule(
     db.commit()
     db.refresh(db_course)
     return db_course
-
