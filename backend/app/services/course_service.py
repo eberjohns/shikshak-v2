@@ -25,7 +25,6 @@ def enroll_student_in_course(db: Session, *, student: User, course: Course) -> C
     """
     Appends a student to a course's enrollment list and saves to the DB.
     """
-    # This automatically handles adding the entry to the 'enrollment' association table.
     course.students_enrolled.append(student)
     db.add(course)
     db.commit()
@@ -36,6 +35,7 @@ def get_courses_by_student(db: Session, *, student_id: uuid.UUID) -> list[Course
     """
     Retrieves all courses a specific student is enrolled in.
     """
+
     student = db.query(User).options(
         joinedload(User.courses_enrolled).joinedload(Course.teacher)
     ).filter(User.id == student_id).first()
@@ -43,6 +43,29 @@ def get_courses_by_student(db: Session, *, student_id: uuid.UUID) -> list[Course
     if not student:
         return []
     return student.courses_enrolled
+
+# This is the new function
+def get_enrolled_course_details(db: Session, *, course_id: uuid.UUID, student_id: uuid.UUID) -> Course | None:
+    """
+    Retrieves a single course's details, but only if the specified student is enrolled.
+    This is a crucial security check.
+    """
+    course = db.query(Course).options(
+        joinedload(Course.teacher),
+        joinedload(Course.schedule),
+        joinedload(Course.students_enrolled) # Eager load students for the check
+    ).filter(Course.id == course_id).first()
+    
+    if not course:
+        return None
+
+    # Check if the student's ID is in the list of enrolled student IDs
+    is_enrolled = any(student.id == student_id for student in course.students_enrolled)
+
+    if not is_enrolled:
+        return None # Return None if the student is not enrolled
+
+    return course
 
 # --- Teacher-Focused Functions ---
 

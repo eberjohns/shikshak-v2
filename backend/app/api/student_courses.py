@@ -53,3 +53,23 @@ def get_my_enrolled_courses(
     Retrieve all courses the current student is enrolled in. (Student only)
     """
     return course_service.get_courses_by_student(db=db, student_id=current_student.id)
+
+@router.get("/my-courses/{course_id}", response_model=course_schema.Course)
+def get_enrolled_course_dashboard(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    course_id: uuid.UUID,
+    current_student: Annotated[User, Depends(deps.get_current_student)],
+):
+    """
+    Retrieve the full details and schedule for a single course the student is enrolled in.
+    """
+    course = course_service.get_enrolled_course_details(
+        db=db, course_id=course_id, student_id=current_student.id
+    )
+    if not course:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Course not found or you are not enrolled in it."
+        )
+    return course
