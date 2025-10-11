@@ -73,7 +73,8 @@ python -m venv venv
 - The ```stop_with_backup.sh``` / ```Stop-With-Backup.ps1``` scripts automate backup and container shutdown.
 - For restoring a specific backup, replace ```backup.sql``` with the timestamped backup filename.
 
-8. Alembic usage
+
+8. Alembic usage(make sure to add the ```DATABASE_URL``` into the ```alembic.ini``` file where it says ```sqlalchemy.url```)
 ```bash
 alembic revision --autogenerate -m "Add message here"
 alembic upgrade head
@@ -82,7 +83,7 @@ alembic upgrade head
 To access a PostgreSQL server from the terminal using the ```psql``` command, follow this format:
 ```bash
 psql -h <host> -p <port> -U <username> -d <database>
-# psql -h 127.0.0.1 -p 5432 -U shikshak_user -d shikshak_db
+# psql -h localhost -p 5432 -U shikshak_user -d shikshak_db
 ```
 
 If when running ```alembic revision --autogenerate``` any problems arise, do:
