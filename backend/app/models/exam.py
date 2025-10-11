@@ -1,7 +1,7 @@
 # app/models/exam.py
 
 import uuid
-from sqlalchemy import Column, String, ForeignKey, Enum
+from sqlalchemy import Column, String, ForeignKey, Enum, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.base import Base
@@ -13,7 +13,9 @@ class Exam(Base):
     title = Column(String, nullable=False)
     status = Column(Enum("draft", "published", name="exam_status"), nullable=False, default="draft")
     
-    # Foreign key to link this exam to a specific course topic (schedule entry)
+    # New column to store teacher's grading instructions
+    grading_rules = Column(Text, nullable=True) 
+
     topic_id = Column(UUID(as_uuid=True), ForeignKey("course_schedule.id"))
 
     # Relationships
