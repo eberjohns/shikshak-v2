@@ -15,5 +15,9 @@ class CourseSchedule(Base):
     end_date = Column(Date, nullable=False)
     course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id"))
 
-    # Relationship
+    # Existing relationship
     course = relationship("Course", back_populates="schedule")
+    
+    # New relationship to link this topic to its exams
+    exams = relationship("Exam", back_populates="topic", cascade="all, delete-orphan")
+
