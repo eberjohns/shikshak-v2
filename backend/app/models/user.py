@@ -5,7 +5,7 @@ from sqlalchemy import Column, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.base import Base
-from app.models.enrollment import enrollment # Import the new table
+from app.models.enrollment import enrollment
 
 class User(Base):
     __tablename__ = "users"
@@ -19,9 +19,12 @@ class User(Base):
     # Relationship for teachers
     courses_taught = relationship("Course", back_populates="teacher")
 
-    # New relationship for students, linked via the 'enrollment' table
+    # Relationship for students
     courses_enrolled = relationship(
         "Course",
         secondary=enrollment,
         back_populates="students_enrolled"
     )
+    
+    submissions = relationship("Submission", back_populates="student")
+

@@ -155,3 +155,63 @@ By providing clear, structured rules now, you're setting up the AI for success w
 4. **Positive and Negative Reinforcement**: It tells the AI what to reward ("use of examples") and what to penalize ("purely definitional answers").
 
 5. **Formatting**: Using newlines (```\n```) and bullet points (```-```) makes the instructions more readable and structured, which helps the AI process them more effectively.
+
+## Answer submission
+
+```JSON
+{
+  "answers": [
+    {
+      "question_id": "6c286ec5-a1af-49a3-8aee-36ede8d5f2eb",
+      "answer_text": "Programming is the act of writing code to perform a specific task. Software engineering, on the other hand, is a much broader discipline that encompasses the entire lifecycle of a software product. It includes programming, but also involves requirements analysis, system design, testing, maintenance, and project management. A disciplined engineering approach is crucial because it provides structure and predictability, ensuring that complex systems are not only functional but also reliable, scalable, and maintainable over time, which prevents chaotic development and reduces long-term costs."
+    },
+    {
+      "question_id": "549301f6-1184-4fda-92dc-66d23df69310",
+      "answer_text": "The primary goals of software engineering are to create high-quality software on time and within budget. Quality means the software should work correctly. Being on time and budget is important for business success."
+    },
+    {
+      "question_id": "ef5b3d34-c257-4c15-9496-ff841cd04312",
+      "answer_text": "A well-defined SDLC is significant because it provides a clear roadmap for the development team. It breaks down the massive task of building software into smaller, manageable phases. Omitting a phase, like proper testing, can lead to a buggy product and user dissatisfaction. Poorly executing the requirements phase can result in building the wrong product altogether, wasting significant time and resources."
+    },
+    {
+      "question_id": "7e9b6844-170f-41f7-9b90-9e977822fc7b",
+      "answer_text": "The typical phases are Requirements Gathering, where you figure out what the user wants. Then there's Implementation, where the code is written. After that is the Design phase, where you plan the architecture. Then comes Maintenance to fix bugs, and finally Testing to make sure everything works. The output of one phase is the input for the next."
+    },
+    {
+      "question_id": "fc50356a-7ccc-4f8c-bc1b-7b04707d8b6c",
+      "answer_text": "The Waterfall model is a traditional, sequential approach where each phase must be fully completed before the next begins. Its advantage is its simplicity and strict control, making it suitable for projects with stable, well-understood requirements, like building a simple inventory management system. Its main disadvantage is its rigidity; changes are very costly. In contrast, the Agile model is iterative and flexible. It works in short cycles called sprints, delivering working software frequently. Its advantage is its ability to adapt to changing requirements, making it ideal for projects where the final scope is unclear, like a new social media app. Its disadvantage is that it requires more customer involvement and can be less predictable in terms of final delivery date and cost."
+    },
+    {
+      "question_id": "23f2caf8-c2b2-4ee8-810b-1b67c1bb26b5",
+      "answer_text": "The requirements gathering phase is the most critical part of the SDLC because it sets the foundation for the entire project. If the requirements are wrong, ambiguous, or incomplete, the team will build the wrong system, regardless of how well they code or test. The biggest risk is a complete project failure. These risks can be mitigated through techniques like creating detailed prototypes, holding regular stakeholder meetings, and employing a rigorous change control process to manage any new or volatile requirements."
+    },
+    {
+      "question_id": "fb4dfecf-6837-41a5-882c-9fc80341cd81",
+      "answer_text": "The types of software maintenance are corrective, which involves adding new features to the software; adaptive, which is modifying the software to work in a new environment; perfective, which is improving performance or maintainability; and preventive, which is fixing issues before they become major problems. It consumes a large part of the cost because software lives for a long time and must constantly be updated to meet new business needs and fix bugs that are discovered over time."
+    },
+    {
+      "question_id": "9dfc14ec-0c20-43e4-a316-f44f9d68445b",
+      "answer_text": "As a project manager, the most important factor is the stability of the project's requirements. For a project with very clear, fixed, and well-documented requirements, such as a government tax calculation system, I would choose the Waterfall model because it provides a structured and predictable path. However, for a project where the requirements are expected to evolve, such as a startup developing a new mobile game, I would choose an Agile model to allow for flexibility and quick feedback from users."
+    },
+    {
+      "question_id": "bfa00574-6c22-44d5-b5e2-d36fc68d1695",
+      "answer_text": "There are many types of testing. Unit testing checks individual components of the code. Integration testing checks if these components work together correctly. System testing evaluates the entire system against the requirements. Finally, user acceptance testing is done by the client to confirm the system meets their needs. These are all important parts of the quality assurance process."
+    },
+    {
+      "question_id": "192f546f-d44e-4931-9a5e-cfc85a2ed506",
+      "answer_text": "Ethical considerations are important in software engineering. For example, during the requirements phase, a professional must be honest about what can be realistically achieved within the budget and timeframe, rather than overpromising. During the testing phase, it is unethical to hide known bugs from the client. A responsible professional should always prioritize user privacy and data security, and be transparent with stakeholders about project status and risks."
+    }
+  ]
+}
+```
+
+### Breakdown of Answer Types for Your Testing:
+- **High-Quality Answers**: Questions 1, 5, 6, 8, 10. These closely follow the grading rules.
+
+- **Vague/Incomplete Answer**: Question 2. It's not wrong, but it lacks depth.
+
+- **Procedural Error**: Question 4. The SDLC phases are listed in the wrong order.
+
+- **Conceptual Error**: Question 7. It incorrectly defines "corrective" maintenance.
+
+- **Interpretational Error**: Question 9. It correctly describes types of testing but fails to answer the core part of the question about why testing throughout the SDLC is important.

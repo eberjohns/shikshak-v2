@@ -8,9 +8,45 @@ from app.models.course import Course
 from app.models.schedule import CourseSchedule
 from app.models.exam import Exam
 from app.models.question import Question
+from app.models.enrollment import enrollment
 from app.schemas.exam import ExamUpdate
 
 # --- New Function ---
+
+def get_published_exams_for_course(db: Session, *, course_id: UUID, student_id: UUID) -> List[Exam]:
+    """
+    Retrieves all published exams for a course, but only if the student is enrolled.
+    Returns an empty list if the student is not enrolled or no published exams exist.
+    """
+    # First, run a quick check to see if an enrollment record exists.
+    enrollment_check = (
+        db.query(enrollment)
+        .filter(
+            enrollment.c.student_id == student_id,
+            enrollment.c.course_id == course_id
+        )
+        .first()
+    )
+
+    # If the student is not enrolled in this course, return an empty list immediately.
+    if not enrollment_check:
+        return []
+
+    # If they are enrolled, proceed to fetch all exams for that course
+    # that have a status of "published".
+    return (
+        db.query(Exam)
+        .join(Exam.topic)
+        .filter(
+            CourseSchedule.course_id == course_id,
+            Exam.status == "published"
+        )
+        .options(joinedload(Exam.questions)) # Eagerly load questions
+        .order_by(Exam.title)
+        .all()
+    )
+
+# --- Existing Teacher-Focused Functions ---
 
 def get_exams_by_teacher(db: Session, *, teacher_id: UUID) -> List[Exam]:
     """
@@ -21,11 +57,9 @@ def get_exams_by_teacher(db: Session, *, teacher_id: UUID) -> List[Exam]:
         .join(Exam.topic)
         .join(CourseSchedule.course)
         .filter(Course.teacher_id == teacher_id)
-        .order_by(Exam.title) # Optional: nice to have them sorted
+        .order_by(Exam.title)
         .all()
     )
-
-# --- Existing Functions ---
 
 def get_exam_by_id_and_teacher(db: Session, *, exam_id: UUID, teacher_id: UUID) -> Exam | None:
     """
@@ -41,7 +75,7 @@ def get_exam_by_id_and_teacher(db: Session, *, exam_id: UUID, teacher_id: UUID) 
 
 def update_exam(db: Session, *, db_exam: Exam, exam_in: ExamUpdate) -> Exam:
     """
-    Updates an exam record in the database based on the provided data.
+    Updates an exam record in the database.
     """
     update_data = exam_in.model_dump(exclude_unset=True)
     for field in update_data:

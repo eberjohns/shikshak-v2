@@ -10,6 +10,8 @@ from app.models.schedule import CourseSchedule
 from app.models.enrollment import enrollment
 from app.models.question import Question
 from app.models.exam import Exam
+from app.models.answer import Answer
+from app.models.submission import Submission
 
 # this is the Alembic Config object, which provides access to the .ini file values
 config = context.config

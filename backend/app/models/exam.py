@@ -12,8 +12,6 @@ class Exam(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False)
     status = Column(Enum("draft", "published", name="exam_status"), nullable=False, default="draft")
-    
-    # New column to store teacher's grading instructions
     grading_rules = Column(Text, nullable=True) 
 
     topic_id = Column(UUID(as_uuid=True), ForeignKey("course_schedule.id"))
@@ -21,3 +19,6 @@ class Exam(Base):
     # Relationships
     topic = relationship("CourseSchedule", back_populates="exams")
     questions = relationship("Question", back_populates="exam", cascade="all, delete-orphan")
+    
+    # New relationship to see all submissions for this exam
+    submissions = relationship("Submission", back_populates="exam")
