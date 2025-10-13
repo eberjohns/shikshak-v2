@@ -7,6 +7,20 @@ from app.models.user import User
 from app.models.course import Course
 from app.models.schedule import CourseSchedule
 from app.schemas.course import CourseCreate
+from sqlalchemy.orm import Session, joinedload
+from uuid import UUID
+
+# --- New Function ---
+def get_public_course_by_id(db: Session, *, course_id: UUID) -> Course | None:
+    """
+    Retrieves a single public course by its ID, eagerly loading teacher info.
+    """
+    return (
+        db.query(Course)
+        .options(joinedload(Course.teacher))
+        .filter(Course.id == course_id)
+        .first()
+    )
 
 # --- Student-Focused Functions ---
 

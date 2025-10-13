@@ -19,12 +19,15 @@ export function StudentCourseDetailPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [courseRes, examsRes] = await Promise.all([
-          apiClient.get(`/student/my-courses/${courseId}`),
-          apiClient.get(`/student/courses/${courseId}/exams`)
-        ]);
+        // Use the NEW public endpoint for course details
+        const courseRes = await apiClient.get(`/courses/${courseId}`);
         setCourse(courseRes.data);
+
+        // Still fetch exams separately, as this depends on the student's enrollment status
+        // The backend will handle the security and return an empty array if not enrolled
+        const examsRes = await apiClient.get(`/student/courses/${courseId}/exams`);
         setExams(examsRes.data);
+
       } catch (err) {
         setError('Failed to fetch course data.');
         console.error(err);
@@ -37,7 +40,7 @@ export function StudentCourseDetailPage() {
 
   if (loading) return <p>Loading course details...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-  if (!course) return <p>Course not found or you are not enrolled.</p>;
+  if (!course) return <p>Course not found.</p>;
 
   return (
     <div>
@@ -62,7 +65,6 @@ export function StudentCourseDetailPage() {
                     <p className="text-sm text-gray-500">{exam.questions.length} questions</p>
                   </div>
                   <Button asChild>
-                    {/* This link will eventually go to the exam taking page */}
                     <Link to={`/student/exams/${exam.id}/take`}>
                       <Pencil className="mr-2 h-4 w-4" /> Take Exam
                     </Link>
@@ -71,7 +73,7 @@ export function StudentCourseDetailPage() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No exams have been published for this course yet.</p>
+            <p className="text-gray-500">No exams are available for this course right now.</p>
           )}
         </div>
       </div>
