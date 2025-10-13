@@ -55,3 +55,14 @@ def login_for_access_token(
         "access_token": access_token,
         "token_type": "bearer",
     }
+
+
+@router.get("/me", response_model=user_schema.User)
+def get_current_user_me(
+    db: Session = Depends(deps.get_db),
+    current_user: user_schema.User = Depends(deps.get_current_user),
+):
+    """
+    Return the current authenticated user.
+    """
+    return current_user
