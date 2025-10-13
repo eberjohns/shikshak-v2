@@ -5,9 +5,10 @@ import { AuthPage } from './pages/auth/AuthPage';
 import { useAuthStore } from './store/authStore';
 import { Button } from './components/ui/button';
 import { LogOut } from 'lucide-react';
-import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
 import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
+import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
+import { CreateCoursePage } from './pages/teacher/CreateCoursePage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -67,6 +68,7 @@ function App() {
         
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
+        <Route path="/teacher/courses/new" element={<CreateCoursePage />} />
 
         {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboardPage />} />
