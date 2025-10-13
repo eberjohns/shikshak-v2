@@ -5,10 +5,12 @@ import { AuthPage } from './pages/auth/AuthPage';
 import { useAuthStore } from './store/authStore';
 import { Button } from './components/ui/button';
 import { LogOut } from 'lucide-react';
-import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
-import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
 import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
 import { CreateCoursePage } from './pages/teacher/CreateCoursePage';
+import { TeacherCourseDetailPage } from './pages/teacher/TeacherCourseDetailPage';
+import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
+import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
+import { StudentCourseDetailPage } from './pages/student/StudentCourseDetailPage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -69,10 +71,12 @@ function App() {
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
         <Route path="/teacher/courses/new" element={<CreateCoursePage />} />
+        <Route path="/teacher/courses/:courseId" element={<TeacherCourseDetailPage />} />
 
         {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboardPage />} />
         <Route path="/student/browse-courses" element={<BrowseCoursesPage />} />
+        <Route path="/student/courses/:courseId" element={<StudentCourseDetailPage />} />
       </Route>
       
       <Route path="/auth" element={<AuthPage />} />

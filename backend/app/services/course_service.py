@@ -44,6 +44,22 @@ def get_courses_by_student(db: Session, *, student_id: UUID) -> list[Course]:
         return []
     return student.courses_enrolled
 
+def get_enrolled_course_details(db: Session, *, course_id: UUID, student_id: UUID) -> Course | None:
+    """
+    Retrieves a single course by its ID, but only if the student is enrolled in it.
+    Eagerly loads teacher and schedule information.
+    """
+    return (
+        db.query(Course)
+        .options(
+            joinedload(Course.teacher),
+            joinedload(Course.schedule)
+        )
+        .join(Course.students_enrolled)
+        .filter(Course.id == course_id, User.id == student_id)
+        .first()
+    )
+
 # --- Teacher-Focused Functions ---
 
 def get_courses_by_teacher(db: Session, *, teacher_id: UUID) -> list[Course]:
