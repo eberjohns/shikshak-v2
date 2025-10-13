@@ -7,6 +7,7 @@ import { Button } from './components/ui/button';
 import { LogOut } from 'lucide-react';
 import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
+import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -64,10 +65,12 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<div><h1>Welcome to Shikshak!</h1><p>Your AI-powered learning companion.</p></div>} />
         
-        {/* Add the dashboard routes */}
+        {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
-        <Route path="/student/dashboard" element={<StudentDashboardPage />} />
 
+        {/* Student Routes */}
+        <Route path="/student/dashboard" element={<StudentDashboardPage />} />
+        <Route path="/student/browse-courses" element={<BrowseCoursesPage />} />
       </Route>
       
       <Route path="/auth" element={<AuthPage />} />
