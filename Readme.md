@@ -67,6 +67,11 @@ python -m venv venv
 .\venv\Scripts\activate
 ```
 
+**To run backend**
+```bash
+uvicorn app.main:app --reload
+```
+
 7. Notes
 - All database backups are stored in the ```backups/``` folder with timestamps.
 - Use ```.env``` for credentials; do not commit sensitive passwords.
@@ -91,3 +96,11 @@ If when running ```alembic revision --autogenerate``` any problems arise, do:
 netstat -ano | findstr "5432"
 ```
 & kill processes which are not docker(there should only be one)
+
+8. To run frontend
+
+```bash
+cd fronend
+npm install
+npm run dev
+```
