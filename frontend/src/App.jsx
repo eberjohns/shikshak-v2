@@ -16,6 +16,7 @@ import { StudentCourseDetailPage } from './pages/student/StudentCourseDetailPage
 import { TakeExamPage } from './pages/student/TakeExamPage';
 import { MySubmissionsPage } from './pages/student/MySubmissionsPage';
 import { SubmissionResultPage } from './pages/student/SubmissionResultPage';
+import { HomePage } from './pages/HomePage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -76,7 +77,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<div><h1>Welcome to Shikshak!</h1><p>Your AI-powered learning companion.</p></div>} />
+        <Route index element={<HomePage />} />
         
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
