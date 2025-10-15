@@ -1,10 +1,12 @@
 // src/pages/teacher/TeacherCourseDetailPage.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import { TopicList } from '../../components/ui/TopicList';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { BarChart2 } from 'lucide-react';
 
 export function TeacherCourseDetailPage() {
   const { courseId } = useParams();
@@ -48,8 +50,17 @@ export function TeacherCourseDetailPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">{course.course_name}</h1>
-      <p className="text-lg text-gray-600 mb-6">Taught by: {course.teacher.full_name}</p>
+      <div className="flex justify-between items-center">
+        <div>
+            <h1 className="text-3xl font-bold">{course.course_name}</h1>
+            <p className="text-lg text-gray-600">Taught by: {course.teacher.full_name}</p>
+        </div>
+        <Button asChild>
+            <Link to={`/teacher/courses/${courseId}/analytics`}>
+                <BarChart2 className="mr-2 h-4 w-4" /> View Analytics
+            </Link>
+        </Button>
+      </div>
       <Separator className="my-6" />
       <h2 className="text-2xl font-semibold mb-4">Course Schedule & Topics</h2>
       <TopicList
