@@ -11,6 +11,7 @@ import { TeacherCourseDetailPage } from './pages/teacher/TeacherCourseDetailPage
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
 import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
 import { StudentCourseDetailPage } from './pages/student/StudentCourseDetailPage';
+import { TakeExamPage } from './pages/student/TakeExamPage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -77,6 +78,7 @@ function App() {
         <Route path="/student/dashboard" element={<StudentDashboardPage />} />
         <Route path="/student/browse-courses" element={<BrowseCoursesPage />} />
         <Route path="/student/courses/:courseId" element={<StudentCourseDetailPage />} />
+        <Route path="/student/exams/:examId/take" element={<TakeExamPage />} />
       </Route>
       
       <Route path="/auth" element={<AuthPage />} />
