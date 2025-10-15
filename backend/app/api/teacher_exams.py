@@ -12,6 +12,24 @@ from app.services import ai_service, exam_service, submission_service
 
 router = APIRouter()
 
+@router.get("/exams/{exam_id}", response_model=exam_schema.Exam)
+def get_my_exam_details(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    exam_id: uuid.UUID,
+    current_teacher: Annotated[User, Depends(deps.get_current_teacher)],
+):
+    """
+    Retrieve details for a specific exam created by the current teacher.
+    (Teacher only)
+    """
+    exam = exam_service.get_exam_by_id_and_teacher(
+        db=db, exam_id=exam_id, teacher_id=current_teacher.id
+    )
+    if not exam:
+        raise HTTPException(status_code=404, detail="Exam not found or you do not have permission to access it.")
+    return exam
+
 @router.get("/exams", response_model=List[exam_schema.Exam])
 def get_my_exams(
     *,

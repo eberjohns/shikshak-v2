@@ -8,6 +8,7 @@ import { LogOut } from 'lucide-react';
 import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
 import { CreateCoursePage } from './pages/teacher/CreateCoursePage';
 import { TeacherCourseDetailPage } from './pages/teacher/TeacherCourseDetailPage';
+import { TeacherExamDetailPage } from './pages/teacher/TeacherExamDetailPage';
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
 import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
 import { StudentCourseDetailPage } from './pages/student/StudentCourseDetailPage';
@@ -80,6 +81,7 @@ function App() {
         <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
         <Route path="/teacher/courses/new" element={<CreateCoursePage />} />
         <Route path="/teacher/courses/:courseId" element={<TeacherCourseDetailPage />} />
+        <Route path="/teacher/exams/:examId" element={<TeacherExamDetailPage />} />
 
         {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboardPage />} />
