@@ -1,13 +1,17 @@
+# app/services/analytics_service.py
+
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from uuid import UUID
 from typing import List, Dict
+from datetime import date, timedelta
 
 from app.models.course import Course
 from app.models.schedule import CourseSchedule
 from app.models.exam import Exam
 from app.models.submission import Submission
 from app.models.answer import Answer
+from app.models.enrollment import enrollment
 
 def get_course_analytics(db: Session, *, course_id: UUID, teacher_id: UUID):
     """
@@ -84,3 +88,73 @@ def get_course_analytics(db: Session, *, course_id: UUID, teacher_id: UUID):
         "most_misunderstood_topics": most_misunderstood_topics,
         "common_error_types": common_error_types,
     }
+
+# --- New Student Analytics Functions ---
+
+def get_student_upcoming_topics(db: Session, *, student_id: UUID) -> List[Dict]:
+    """
+    Retrieves topics from a student's enrolled courses that are due in the next 14 days.
+    """
+    today = date.today()
+    two_weeks_from_now = today + timedelta(days=14)
+
+    results = (
+        db.query(
+            CourseSchedule.topic_name,
+            Course.course_name,
+            CourseSchedule.end_date
+        )
+        .join(Course, CourseSchedule.course_id == Course.id)
+        .join(enrollment, Course.id == enrollment.c.course_id)
+        .filter(
+            enrollment.c.student_id == student_id,
+            CourseSchedule.end_date >= today,
+            CourseSchedule.end_date <= two_weeks_from_now
+        )
+        .order_by(CourseSchedule.end_date.asc())
+        .all()
+    )
+    return results
+
+def get_student_performance_summary(db: Session, *, student_id: UUID) -> Dict:
+    """
+    Analyzes all of a student's graded answers to find the most common error type.
+    """
+    error_counts = (
+        db.query(
+            Answer.error_type,
+            func.count(Answer.id).label('count')
+        )
+        .join(Submission, Answer.submission_id == Submission.id)
+        .filter(
+            Submission.student_id == student_id,
+            Answer.error_type != None,
+            Answer.error_type != 'correct' # Exclude correct answers
+        )
+        .group_by(Answer.error_type)
+        .order_by(func.count(Answer.id).desc())
+        .first() # Get the top one
+    )
+
+    total_graded_answers = (
+         db.query(func.count(Answer.id))
+        .join(Submission, Answer.submission_id == Submission.id)
+        .filter(
+            Submission.student_id == student_id,
+            Answer.error_type != None,
+        )
+        .scalar()
+    )
+
+    if error_counts:
+        return {
+            "most_common_error": error_counts.error_type,
+            "error_count": error_counts.count,
+            "total_graded_answers": total_graded_answers or 0
+        }
+    else:
+        return {
+            "most_common_error": None,
+            "error_count": 0,
+            "total_graded_answers": total_graded_answers or 0
+        }

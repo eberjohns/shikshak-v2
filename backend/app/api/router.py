@@ -1,7 +1,7 @@
 # app/api/router.py
 
 from fastapi import APIRouter
-from app.api import auth, courses, student_courses, teacher_exams, student_exams, users, public_courses, teacher_analytics
+from app.api import auth, courses, student_courses, teacher_exams, student_exams, users, public_courses, teacher_analytics, student_analytics
 
 api_router = APIRouter()
 
@@ -18,3 +18,4 @@ api_router.include_router(teacher_analytics.router, prefix="/teacher", tags=["Te
 # Student Routes
 api_router.include_router(student_courses.router, prefix="/student", tags=["Student - Courses"])
 api_router.include_router(student_exams.router, prefix="/student", tags=["Student - Exams"])
+api_router.include_router(student_analytics.router, prefix="/student", tags=["Student - Analytics"])

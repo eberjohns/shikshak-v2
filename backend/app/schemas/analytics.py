@@ -1,5 +1,6 @@
 import uuid
 from pydantic import BaseModel
+from datetime import date
 from typing import List, Optional
 
 class TopicAnalytics(BaseModel):
@@ -22,3 +23,21 @@ class CourseAnalytics(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TopicPerformance(BaseModel):
+    topic_id: uuid.UUID
+    topic_name: str
+    average_score: float
+
+class UpcomingTopic(BaseModel):
+    topic_name: str
+    course_name: str
+    end_date: date
+
+    class Config:
+        from_attributes = True
+        
+class StudentPerformanceSummary(BaseModel):
+    most_common_error: Optional[str] = None
+    error_count: int = 0
+    total_graded_answers: int = 0
