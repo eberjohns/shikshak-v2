@@ -12,6 +12,8 @@ import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
 import { BrowseCoursesPage } from './pages/student/BrowseCoursesPage';
 import { StudentCourseDetailPage } from './pages/student/StudentCourseDetailPage';
 import { TakeExamPage } from './pages/student/TakeExamPage';
+import { MySubmissionsPage } from './pages/student/MySubmissionsPage';
+import { SubmissionResultPage } from './pages/student/SubmissionResultPage';
 
 const MainLayout = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -43,6 +45,11 @@ const MainLayout = () => {
                 <Button variant="outline" asChild>
                   <Link to={getDashboardLink()}>Dashboard</Link>
                 </Button>
+                {user?.role === 'student' && (
+                  <Button variant="ghost" asChild>
+                    <Link to="/student/my-submissions">My Submissions</Link>
+                  </Button>
+                )}
                 <Button variant="ghost" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" /> Logout
                 </Button>
@@ -79,6 +86,8 @@ function App() {
         <Route path="/student/browse-courses" element={<BrowseCoursesPage />} />
         <Route path="/student/courses/:courseId" element={<StudentCourseDetailPage />} />
         <Route path="/student/exams/:examId/take" element={<TakeExamPage />} />
+        <Route path="/student/my-submissions" element={<MySubmissionsPage />} />
+        <Route path="/student/submissions/:submissionId" element={<SubmissionResultPage />} />
       </Route>
       
       <Route path="/auth" element={<AuthPage />} />

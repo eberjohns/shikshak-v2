@@ -39,6 +39,7 @@ def get_submission_by_id_and_student(db: Session, *, submission_id: UUID, studen
     return (
         db.query(Submission)
         .options(
+            joinedload(Submission.exam),
             joinedload(Submission.answers)
             .joinedload(Answer.question)
         )

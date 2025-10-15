@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.answer import Answer, AnswerCreate
-from app.schemas.user import UserPublic # Import this
+from app.schemas.user import UserPublic
 
 # --- New Schema for the Teacher's Dashboard ---
 
@@ -13,7 +13,7 @@ class SubmissionForTeacher(BaseModel):
     id: uuid.UUID
     submitted_at: datetime
     overall_score: Optional[float] = None
-    student: UserPublic # Nest the student's public info
+    student: UserPublic
 
     class Config:
         from_attributes = True
@@ -44,10 +44,9 @@ class SubmissionCreate(BaseModel):
 class Submission(BaseModel):
     id: uuid.UUID
     submitted_at: datetime
-    student_id: uuid.UUID
-    exam_id: uuid.UUID
     overall_score: Optional[float] = None
     overall_feedback: Optional[str] = None
+    exam: ExamSummary
     answers: List[Answer] = []
 
     class Config:

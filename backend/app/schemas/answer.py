@@ -3,6 +3,7 @@
 import uuid
 from pydantic import BaseModel
 from typing import Optional
+from app.schemas.question import Question
 
 # Schema for receiving an answer in a submission
 class AnswerCreate(BaseModel):
@@ -13,9 +14,9 @@ class AnswerCreate(BaseModel):
 class Answer(BaseModel):
     id: uuid.UUID
     answer_text: str
-    question_id: uuid.UUID
     feedback: Optional[str] = None
     error_type: Optional[str] = None
+    question: Question
 
     class Config:
         from_attributes = True
