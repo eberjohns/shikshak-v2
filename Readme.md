@@ -104,3 +104,10 @@ cd fronend
 npm install
 npm run dev
 ```
+
+## (latest) To Build and run the whole application:
+```bash
+docker-compose up --build
+```
+
+Once the containers are up and running, you should be able to access the application at http://localhost:8080/.
