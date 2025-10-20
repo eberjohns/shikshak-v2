@@ -10,6 +10,7 @@ from app.models.exam import Exam
 from app.models.question import Question
 from app.models.enrollment import enrollment
 from app.schemas.exam import ExamUpdate
+from app.schemas.question import QuestionCreate
 
 # --- New Function ---
 
@@ -47,6 +48,42 @@ def get_published_exams_for_course(db: Session, *, course_id: UUID, student_id: 
     )
 
 # --- Existing Teacher-Focused Functions ---
+
+def get_exam(db: Session, exam_id: UUID) -> Exam:
+    """Get an exam by its ID."""
+    return db.query(Exam).filter(Exam.id == exam_id).first()
+
+def get_question(db: Session, question_id: UUID) -> Question:
+    """Get a question by its ID."""
+    return db.query(Question).filter(Question.id == question_id).first()
+
+def update_question(
+    db: Session,
+    question: Question,
+    question_update: ExamUpdate
+) -> Question:
+    """Update a question with the provided data."""
+    for key, value in question_update.model_dump(exclude_unset=True).items():
+        setattr(question, key, value)
+    
+    db.commit()
+    db.refresh(question)
+    return question
+
+def create_question(
+    db: Session,
+    exam_id: UUID,
+    question_create: QuestionCreate
+) -> Question:
+    """Create a new question for an exam."""
+    question = Question(
+        **question_create.model_dump(),
+        exam_id=exam_id
+    )
+    db.add(question)
+    db.commit()
+    db.refresh(question)
+    return question
 
 def get_exams_by_teacher(db: Session, *, teacher_id: UUID) -> List[Exam]:
     """
@@ -115,7 +152,8 @@ def create_exam_draft(
     for text in question_texts:
         db_question = Question(
             question_text=text,
-            exam_id=db_exam.id
+            exam_id=db_exam.id,
+            marks=1  # Default marks for AI-generated questions
         )
         db.add(db_question)
     

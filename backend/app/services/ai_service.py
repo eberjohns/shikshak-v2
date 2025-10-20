@@ -15,7 +15,8 @@ from app.schemas.feedback import AIFeedback
 async def grade_single_answer(
     question_text: str,
     answer_text: str,
-    grading_rules: str
+    grading_rules: str,
+    marks: float
 ) -> AIFeedback:
     """
     Calls Gemini API to grade a single student answer based on the teacher's rules.
@@ -28,17 +29,19 @@ async def grade_single_answer(
 
     system_prompt = f"""
     You are an expert AI teaching assistant. Your task is to grade a student's answer for a subjective exam question.
-    - You will be given the Question, the Student's Answer, and the Teacher's Grading Rules.
+    - You will be given the Question, the Student's Answer, the Teacher's Grading Rules, and the total marks for the question.
     - Adhere strictly to the Teacher's Grading Rules when evaluating the answer.
-    - Provide a score from 0 to 10.
-    - Provide concise, constructive feedback explaining the score.
+    - Provide a score from 0 to 10 (for internal reference).
+    - Most importantly, award the student a number of marks (awarded_marks) between 0 and the question's total marks, based on the quality of their answer and the rules.
+    - Provide concise, constructive feedback explaining the marks awarded.
     - Categorize the answer's primary error type from the provided list. If the answer is good, use 'correct'.
 
     The student's answer might be a high-quality response, a flawed answer, or somewhere in between. Evaluate it impartially based on the rules.
 
     Teacher's Grading Rules: "{grading_rules}"
+    Total Marks for this Question: {marks}
     """
-    
+
     user_prompt = f"""
     Question: "{question_text}"
     Student's Answer: "{answer_text}"
@@ -75,7 +78,7 @@ async def grade_single_answer(
 
 async def generate_overall_feedback(
     graded_answers: List[Dict[str, Any]],
-    overall_score: float
+    overall_score: Any
 ) -> str:
     """
     Calls Gemini API to generate summary feedback for an entire exam submission.
@@ -103,12 +106,27 @@ async def generate_overall_feedback(
             f"Error Type: {item['error_type']}\n\n"
         )
     
+    # Accept overall_score as either a float or a [earned, total] list.
+    if isinstance(overall_score, (list, tuple)) and len(overall_score) == 2:
+        earned, total = overall_score
+        try:
+            percent = (earned / total * 100) if total else 0
+        except Exception:
+            percent = 0
+        score_display = f"{earned}/{total} ({percent:.1f}%)"
+    else:
+        # fallback for legacy numeric scores
+        try:
+            score_display = f"{float(overall_score):.1f}"
+        except Exception:
+            score_display = str(overall_score)
+
     user_prompt = f"""
-    Student's Overall Score: {overall_score:.1f}/10
-    
+    Student's Overall Score: {score_display}
+
     Performance on each question:
     {performance_summary}
-    
+
     Please provide the summary feedback paragraph now.
     """
 

@@ -43,12 +43,19 @@ def get_course_analytics(db: Session, *, course_id: UUID, teacher_id: UUID):
             "common_error_types": []
         }
 
-    # 3. Calculate overall course average score
-    overall_scores = [s.overall_score for s in submissions if s.overall_score is not None]
-    average_course_score = sum(overall_scores) / len(overall_scores) if overall_scores else None
+    # 3. Calculate overall course total score and marks
+    total_earned = 0
+    total_possible = 0
+    for submission in submissions:
+        if submission.overall_score is not None:
+            earned, possible = submission.overall_score
+            total_earned += earned
+            total_possible += possible
+
+    average_course_score = [total_earned, total_possible] if total_possible > 0 else None
 
     # 4. Calculate analytics per topic
-    topic_scores: Dict[UUID, List[float]] = {}
+    topic_scores: Dict[UUID, List[List[int]]] = {}
     for sub in submissions:
         if sub.exam and sub.exam.topic_id and sub.overall_score is not None:
             topic_id = sub.exam.topic_id
@@ -59,7 +66,12 @@ def get_course_analytics(db: Session, *, course_id: UUID, teacher_id: UUID):
     topic_analytics = []
     for topic in course.schedule:
         scores = topic_scores.get(topic.id)
-        avg_score = sum(scores) / len(scores) if scores else None
+        if scores:
+            total_earned = sum(score[0] for score in scores)
+            total_possible = sum(score[1] for score in scores)
+            avg_score = [total_earned, total_possible]
+        else:
+            avg_score = None
         topic_analytics.append({
             "topic_id": topic.id, "topic_name": topic.topic_name, "average_score": avg_score
         })

@@ -36,7 +36,7 @@ export function TeacherAnalyticsPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2">Course Analytics</h1>
-      <p className="text-lg text-gray-600 mb-6">{analytics.course_name}</p>
+  <p className="text-lg text-muted-foreground mb-6">{analytics.course_name}</p>
 
       {/* Key Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3 mb-8">
@@ -62,7 +62,15 @@ export function TeacherAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analytics.average_course_score ? `${analytics.average_course_score.toFixed(1)} / 10` : 'N/A'}
+              {(() => {
+                const avg = analytics.average_course_score;
+                if (!avg || avg.length < 2) return 'N/A';
+                const earned = Number(avg[0]) || 0;
+                const possible = Number(avg[1]) || 0;
+                if (possible === 0) return 'N/A';
+                const pct = (earned / possible) * 100;
+                return `${pct.toFixed(1)}%`;
+              })()}
             </div>
           </CardContent>
         </Card>
@@ -86,7 +94,15 @@ export function TeacherAnalyticsPage() {
                 {analytics.most_misunderstood_topics.map(topic => (
                   <TableRow key={topic.topic_id}>
                     <TableCell className="font-medium">{topic.topic_name}</TableCell>
-                    <TableCell className="text-right">{topic.average_score.toFixed(1)} / 10</TableCell>
+                    <TableCell className="text-right">{(() => {
+                      const avg = topic.average_score;
+                      if (!avg || avg.length < 2) return 'N/A';
+                      const earned = Number(avg[0]) || 0;
+                      const possible = Number(avg[1]) || 0;
+                      if (possible === 0) return 'N/A';
+                      const pct = (earned / possible) * 100;
+                      return `${pct.toFixed(1)}%`;
+                    })()}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

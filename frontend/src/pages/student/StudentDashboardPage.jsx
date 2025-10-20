@@ -26,13 +26,13 @@ const PerformanceInsightCard = ({ summary }) => {
   const percentage = ((summary.error_count / summary.total_graded_answers) * 100).toFixed(0);
 
   return (
-    <Card className="bg-yellow-50 border-yellow-200">
+    <Card className="bg-card border-yellow-200">
       <CardHeader>
         <CardTitle className="flex items-center"><AlertTriangle className="mr-2 h-5 w-5 text-yellow-600" /> Area for Improvement</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-lg font-bold capitalize">{summary.most_common_error} Errors</p>
-        <p className="text-gray-600">
+  <p className="text-lg font-bold capitalize">{summary.most_common_error} Errors</p>
+  <p className="text-muted-foreground">
           We've noticed that <span className="font-semibold">{percentage}%</span> of your incorrect answers are related to <span className="font-semibold">'{summary.most_common_error}'</span> issues.
           Consider reviewing course materials related to this area.
         </p>
@@ -46,10 +46,10 @@ const UpcomingTopicsCard = ({ topics }) => {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center"><CalendarCheck className="mr-2 h-5 w-5 text-blue-500" /> Upcoming Deadlines</CardTitle>
-                <CardDescription>Topics due in the next 14 days.</CardDescription>
-            </CardHeader>
+      <CardHeader>
+        <CardTitle className="flex items-center"><CalendarCheck className="mr-2 h-5 w-5 text-blue-500" /> Upcoming Deadlines</CardTitle>
+        <CardDescription className="text-muted-foreground">Topics due in the next 14 days.</CardDescription>
+      </CardHeader>
             <CardContent>
                 {topics.length > 0 ? (
                     <ul className="space-y-3">
@@ -57,9 +57,9 @@ const UpcomingTopicsCard = ({ topics }) => {
                             <li key={index} className="flex justify-between items-center text-sm">
                                 <div>
                                     <p className="font-semibold">{topic.topic_name}</p>
-                                    <p className="text-xs text-gray-500">{topic.course_name}</p>
+                  <p className="text-xs text-muted-foreground">{topic.course_name}</p>
                                 </div>
-                                <p className="font-medium text-gray-700">{formatDate(topic.end_date)}</p>
+                <p className="font-medium text-foreground">{formatDate(topic.end_date)}</p>
                             </li>
                         ))}
                     </ul>
@@ -111,7 +111,7 @@ export function StudentDashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Student Dashboard</h1>
-          <p className="text-xl text-gray-600">Welcome, {user?.full_name || 'Student'}!</p>
+          <p className="text-xl text-muted-foreground">Welcome, {user?.full_name || 'Student'}!</p>
         </div>
         <Button asChild>
           <Link to="/student/browse-courses">

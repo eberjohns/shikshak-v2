@@ -5,6 +5,7 @@ import { AuthPage } from './pages/auth/AuthPage';
 import { useAuthStore } from './store/authStore';
 import { Button } from './components/ui/button';
 import { LogOut } from 'lucide-react';
+import ThemeToggle from './components/ui/ThemeToggle';
 import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage';
 import { CreateCoursePage } from './pages/teacher/CreateCoursePage';
 import { TeacherCourseDetailPage } from './pages/teacher/TeacherCourseDetailPage';
@@ -36,15 +37,18 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white shadow-md sticky top-0 z-10">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card shadow-md sticky top-0 z-10">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
-          <Link to="/" className="text-2xl font-bold text-gray-800">
+          <Link to="/" className="text-2xl font-bold text-foreground">
             Shikshak
           </Link>
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
                <>
+                <div className="mr-2">
+                  <ThemeToggle />
+                </div>
                 <Button variant="outline" asChild>
                   <Link to={getDashboardLink()}>Dashboard</Link>
                 </Button>
