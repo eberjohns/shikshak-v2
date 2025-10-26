@@ -12,7 +12,7 @@ from app.schemas.user import UserPublic
 class SubmissionForTeacher(BaseModel):
     id: uuid.UUID
     submitted_at: datetime
-    overall_score: Optional[float] = None
+    overall_score: Optional[list[float]] = None
     student: UserPublic
 
     class Config:
@@ -30,7 +30,7 @@ class ExamSummary(BaseModel):
 class SubmissionSummary(BaseModel):
     id: uuid.UUID
     submitted_at: datetime
-    overall_score: Optional[float] = None
+    overall_score: Optional[list[float]] = None
     exam: ExamSummary
 
     class Config:
@@ -44,7 +44,7 @@ class SubmissionCreate(BaseModel):
 class Submission(BaseModel):
     id: uuid.UUID
     submitted_at: datetime
-    overall_score: Optional[float] = None
+    overall_score: Optional[list[float]] = None
     overall_feedback: Optional[str] = None
     exam: ExamSummary
     answers: List[Answer] = []

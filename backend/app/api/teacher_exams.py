@@ -7,10 +7,116 @@ import uuid
 
 from app.api import deps
 from app.models.user import User
-from app.schemas import exam as exam_schema, submission as submission_schema
+from app.schemas import exam as exam_schema, submission as submission_schema, question as question_schema
 from app.services import ai_service, exam_service, submission_service
 
 router = APIRouter()
+
+@router.get("/exams/{exam_id}/questions", response_model=List[question_schema.Question])
+def get_exam_questions(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    exam_id: uuid.UUID,
+    current_teacher: Annotated[User, Depends(deps.get_current_teacher)],
+):
+    exam = exam_service.get_exam(db=db, exam_id=exam_id)
+    if not exam:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exam not found",
+        )
+    if exam.topic.course.teacher_id != current_teacher.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this exam",
+        )
+    return exam.questions
+
+@router.put("/questions/{question_id}", response_model=question_schema.Question)
+def update_question(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    question_id: uuid.UUID,
+    question_update: question_schema.QuestionUpdate,
+    current_teacher: Annotated[User, Depends(deps.get_current_teacher)],
+):
+    question = exam_service.get_question(db=db, question_id=question_id)
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found",
+        )
+    if question.exam.topic.course.teacher_id != current_teacher.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to modify this question",
+        )
+    
+    updated_question = exam_service.update_question(
+        db=db, 
+        question=question, 
+        question_update=question_update
+    )
+    return updated_question
+
+@router.post("/exams/{exam_id}/questions", response_model=question_schema.Question)
+def add_question(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    exam_id: uuid.UUID,
+    question_create: question_schema.QuestionCreate,
+    current_teacher: Annotated[User, Depends(deps.get_current_teacher)],
+):
+    exam = exam_service.get_exam(db=db, exam_id=exam_id)
+    if not exam:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exam not found",
+        )
+    if exam.topic.course.teacher_id!= current_teacher.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to modify this exam",
+        )
+    
+    # Create and return the new question
+    new_question = exam_service.create_question(
+        db=db,
+        exam_id=exam_id,
+        question_create=question_create
+    )
+    return new_question
+
+@router.delete("/questions/{question_id}")
+def delete_question(
+    *,
+    db: Annotated[Session, Depends(deps.get_db)],
+    question_id: uuid.UUID,
+    current_teacher: Annotated[User, Depends(deps.get_current_teacher)],
+):
+    """Delete a specific question."""
+    question = exam_service.get_question(db=db, question_id=question_id)
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found",
+        )
+    if question.exam.topic.course.teacher_id != current_teacher.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this question",
+        )
+    
+    db.delete(question)
+    db.commit()
+    return {"message": "Question deleted successfully"}
+    
+    new_question = exam_service.create_question(
+        db=db,
+        exam_id=exam_id,
+        question_create=question_create.model_dump()
+    )
+    return new_question
 
 @router.get("/exams/{exam_id}", response_model=exam_schema.Exam)
 def get_my_exam_details(

@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import apiClient from '../../api/apiClient';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import  apiClient  from '../../api/apiClient';
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "../../components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import { Textarea } from "../../components/ui/textarea";
+import { Label } from "../../components/ui/label";
+import { Badge } from "../../components/ui/badge";
 import { Bot, Edit, ListChecks } from 'lucide-react';
+import { QuestionManager } from "../../components/ui/QuestionManager";
 
 export function TeacherExamDetailPage() {
   const { examId } = useParams();
@@ -81,7 +82,7 @@ export function TeacherExamDetailPage() {
   const ungradedCount = submissions.filter(s => s.overall_score === null).length;
 
   return (
-    <div>
+    <div className="container mx-auto py-6 px-4">
       <div className="flex justify-between items-start mb-6">
         <div>
           <h1 className="text-3xl font-bold">{exam.title}</h1>
@@ -116,7 +117,18 @@ export function TeacherExamDetailPage() {
           </Button>
         </div>
       </div>
+      {/* Question Manager */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Exam Questions</CardTitle>
+          <CardDescription>View, edit, or add questions to this exam.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <QuestionManager examId={examId} onUpdate={fetchData} examStatus={exam.status} />
+        </CardContent>
+      </Card>
       
+      {/* Submissions */}
       <Card>
         <CardHeader>
           <CardTitle>Student Submissions</CardTitle>
@@ -137,7 +149,11 @@ export function TeacherExamDetailPage() {
                   <TableCell>{sub.student.full_name}</TableCell>
                   <TableCell>{new Date(sub.submitted_at).toLocaleString()}</TableCell>
                   <TableCell className="text-right font-medium">
-                    {sub.overall_score !== null ? `${sub.overall_score.toFixed(1)} / 10` : 'Not Graded'}
+                    {Array.isArray(sub.overall_score) && sub.overall_score.length === 2
+                      ? `${sub.overall_score[0]} / ${sub.overall_score[1]}`
+                      : sub.overall_score !== null
+                        ? `${sub.overall_score} / ?`
+                        : 'Not Graded'}
                   </TableCell>
                 </TableRow>
               ))}
@@ -148,3 +164,5 @@ export function TeacherExamDetailPage() {
     </div>
   );
 }
+
+export default TeacherExamDetailPage;

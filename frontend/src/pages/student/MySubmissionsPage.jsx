@@ -56,7 +56,13 @@ export function MySubmissionsPage() {
                   <CardContent className="flex justify-between items-center">
                     <div>
                       <p className="text-lg font-semibold">
-                        Overall Score: {sub.overall_score !== null ? `${sub.overall_score.toFixed(1)} / 10` : 'Pending Grade'}
+                        Overall Score: {
+                          Array.isArray(sub.overall_score) && sub.overall_score.length === 2
+                            ? `${sub.overall_score[0].toFixed(1)} / ${sub.overall_score[1].toFixed(1)}`
+                            : sub.overall_score !== null
+                              ? `${sub.overall_score} / ?`
+                              : 'Pending Grade'
+                        }
                       </p>
                     </div>
                     <Button asChild disabled={sub.overall_score === null}>

@@ -115,8 +115,9 @@ const RegisterForm = () => {
 
 
 export function AuthPage() {
+  // AuthPage uses light class to stay in light theme even when dark mode is enabled
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100">
+    <div className="light flex items-center justify-center min-h-screen bg-slate-100">
       <Tabs defaultValue="login" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>

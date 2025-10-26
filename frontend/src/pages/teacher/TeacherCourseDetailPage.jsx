@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import { TopicList } from '../../components/ui/TopicList';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+import { Separator } from '../../components/ui/separator';
+import { Button } from '../../components/ui/button';
 import { BarChart2 } from 'lucide-react';
 
 export function TeacherCourseDetailPage() {
@@ -36,9 +36,10 @@ export function TeacherCourseDetailPage() {
       return;
     }
     try {
-      await apiClient.post(`/teacher/topics/${topicId}/generate-exam`);
-      alert('Draft exam generated successfully! You can manage it from your dashboard.');
-      navigate('/teacher/dashboard');
+      const res = await apiClient.post(`/teacher/topics/${topicId}/generate-exam`);
+      const exam = res.data;
+      alert('Draft exam generated successfully! Opening the exam editor...');
+      navigate(`/teacher/exams/${exam.id}`);
     } catch (err) {
       alert(err.response?.data?.detail || 'Failed to generate exam.');
     }
@@ -53,7 +54,7 @@ export function TeacherCourseDetailPage() {
       <div className="flex justify-between items-center">
         <div>
             <h1 className="text-3xl font-bold">{course.course_name}</h1>
-            <p className="text-lg text-gray-600">Taught by: {course.teacher.full_name}</p>
+        <p className="text-lg text-muted-foreground">Taught by: {course.teacher.full_name}</p>
         </div>
         <Button asChild>
             <Link to={`/teacher/courses/${courseId}/analytics`}>

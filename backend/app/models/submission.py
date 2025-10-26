@@ -1,7 +1,7 @@
 # app/models/submission.py
 
 import uuid
-from sqlalchemy import Column, ForeignKey, DateTime, Float, Text
+from sqlalchemy import Column, ForeignKey, DateTime, Float, Text, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -14,7 +14,8 @@ class Submission(Base):
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # AI-populated fields (will be null initially)
-    overall_score = Column(Float, nullable=True)
+    # overall_score stores [earned_marks, total_marks] as JSON
+    overall_score = Column(JSON, nullable=True)
     overall_feedback = Column(Text, nullable=True)
 
     # Foreign Keys

@@ -11,10 +11,10 @@ import { Separator } from '@/components/ui/separator';
 
 // A simple component to display exam info
 const ExamListItem = ({ exam }) => (
-  <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+  <div className="flex justify-between items-center p-3 bg-card rounded-lg shadow-sm">
     <div>
       <p className="font-semibold">{exam.title}</p>
-      <p className="text-sm text-gray-500">Status: <span className={`font-medium ${exam.status === 'published' ? 'text-green-600' : 'text-yellow-600'}`}>{exam.status}</span></p>
+      <p className="text-sm text-muted-foreground">Status: <span className={`font-medium ${exam.status === 'published' ? 'text-green-600' : 'text-yellow-600'}`}>{exam.status}</span></p>
     </div>
     <Button variant="outline" size="sm" asChild>
        {/* This link will eventually go to the exam detail page */}
@@ -57,7 +57,7 @@ export function TeacherDashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Teacher Dashboard</h1>
-          <p className="text-xl text-gray-600">Welcome, {user?.full_name || 'Teacher'}!</p>
+          <p className="text-xl text-muted-foreground">Welcome, {user?.full_name || 'Teacher'}!</p>
         </div>
         <Button asChild>
           <Link to="/teacher/courses/new">

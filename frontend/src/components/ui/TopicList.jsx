@@ -1,6 +1,6 @@
 import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
+import { Button } from "./button";
 import { Zap } from 'lucide-react';
 
 export function TopicList({ schedule, role, onGenerateExam }) {
@@ -24,11 +24,11 @@ export function TopicList({ schedule, role, onGenerateExam }) {
           <AccordionTrigger>
             <div className="flex justify-between items-center w-full pr-4">
               <span className="text-left font-semibold">{index + 1}. {topic.topic_name}</span>
-              <span className="text-sm text-gray-500">Due: {formatDate(topic.end_date)}</span>
+              <span className="text-sm text-muted-foreground">Due: {formatDate(topic.end_date)}</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="px-4 py-2 bg-slate-50 rounded-md">
+            <div className="px-4 py-2 bg-card rounded-md">
               <p className="mb-4">{topic.topic_description}</p>
               {role === 'teacher' && (
                 <Button size="sm" onClick={() => onGenerateExam(topic.id)}>

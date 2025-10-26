@@ -47,7 +47,7 @@ export function SubmissionResultPage() {
     return (
         <div>
             <h1 className="text-3xl font-bold mb-2">Feedback Report</h1>
-            <p className="text-lg text-gray-600 mb-6">For Exam: {submission.exam.title}</p>
+            <p className="text-lg text-muted-foreground mb-6">For Exam: {submission.exam.title}</p>
             <Card>
                 <CardHeader>
                     <CardTitle>Grading in Progress</CardTitle>
@@ -63,17 +63,23 @@ export function SubmissionResultPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2">Feedback Report</h1>
-      <p className="text-lg text-gray-600 mb-6">For Exam: {submission.exam.title}</p>
+  <p className="text-lg text-muted-foreground mb-6">For Exam: {submission.exam.title}</p>
 
-      <Card className="mb-8 bg-green-50 border-green-200">
+  <Card className="mb-8 bg-card border-green-200">
         <CardHeader>
           <CardTitle>Overall Performance</CardTitle>
           <CardDescription>
-            Your final score is <span className="font-bold text-lg">{submission.overall_score.toFixed(1)} / 10</span>
+            Your final score is <span className="font-bold text-lg">
+              {Array.isArray(submission.overall_score) && submission.overall_score.length === 2
+                ? `${submission.overall_score[0]} / ${submission.overall_score[1]}`
+                : submission.overall_score !== null
+                  ? `${submission.overall_score} / ?`
+                  : 'Not Graded'}
+            </span>
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-gray-700">{submission.overall_feedback}</p>
+          <CardContent>
+          <p className="text-foreground">{submission.overall_feedback}</p>
         </CardContent>
       </Card>
       
@@ -88,16 +94,16 @@ export function SubmissionResultPage() {
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-4">
-              <div className="p-4 bg-slate-100 rounded">
-                <p className="font-semibold text-gray-700">Original Question:</p>
+              <div className="p-4 bg-popover rounded">
+                <p className="font-semibold text-foreground">Original Question:</p>
                 <p>{answer.question.question_text}</p>
               </div>
-               <div className="p-4 bg-blue-50 border border-blue-200 rounded">
-                <p className="font-semibold text-gray-700">Your Answer:</p>
+               <div className="p-4 bg-card border border-blue-200 rounded">
+                <p className="font-semibold text-foreground">Your Answer:</p>
                 <p>{answer.answer_text}</p>
               </div>
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="font-semibold text-gray-700">AI Feedback:</p>
+              <div className="p-4 bg-card border border-yellow-200 rounded">
+                <p className="font-semibold text-foreground">AI Feedback:</p>
                 <p>{answer.feedback}</p>
               </div>
             </AccordionContent>

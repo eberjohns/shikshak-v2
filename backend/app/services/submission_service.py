@@ -155,6 +155,7 @@ async def grade_all_submissions_for_exam(db: Session, exam_id: UUID) -> int:
                 question_text=answer.question.question_text,
                 answer_text=answer.answer_text,
                 grading_rules=exam.grading_rules,
+                marks=answer.question.marks or 1
             )
             for answer in submission.answers
         ]
@@ -162,6 +163,7 @@ async def grade_all_submissions_for_exam(db: Session, exam_id: UUID) -> int:
         feedback_results = await asyncio.gather(*grading_tasks, return_exceptions=True)
 
         total_score = 0
+        total_marks = 0
         graded_answers_summary = []
         
         for i, result in enumerate(feedback_results):
@@ -170,27 +172,34 @@ async def grade_all_submissions_for_exam(db: Session, exam_id: UUID) -> int:
                 print(f"Error grading answer {answer.id}: {result}")
                 answer.feedback = "Error during AI grading."
                 answer.error_type = "system_error"
+                answer_marks = answer.question.marks or 1
+                awarded_marks = 0
             else:
                 answer.feedback = result.feedback
                 answer.error_type = result.error_type
-                total_score += result.score
-                graded_answers_summary.append({
-                    "question": answer.question.question_text,
-                    "feedback": result.feedback,
-                    "error_type": result.error_type
-                })
+                answer_marks = answer.question.marks or 1
+                awarded_marks = result.awarded_marks
+            total_score += awarded_marks
+            total_marks += answer_marks
+            graded_answers_summary.append({
+                "question": answer.question.question_text,
+                "feedback": answer.feedback,
+                "error_type": answer.error_type,
+                "marks": answer_marks,
+                "earned_marks": awarded_marks
+            })
             db.add(answer)
 
         if submission.answers:
-            submission.overall_score = round(total_score / len(submission.answers), 2)
+            # Store both earned and total marks in overall_score field as a tuple
+            submission.overall_score = [total_score, total_marks]
             submission.overall_feedback = await ai_service.generate_overall_feedback(
                 graded_answers=graded_answers_summary,
                 overall_score=submission.overall_score
             )
         else:
-            submission.overall_score = 0
+            submission.overall_score = [0, 0]
             submission.overall_feedback = "No answers were submitted for grading."
-        
         db.add(submission)
 
     db.commit()

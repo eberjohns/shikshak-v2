@@ -6,7 +6,8 @@ from typing import List, Optional
 class TopicAnalytics(BaseModel):
     topic_id: uuid.UUID
     topic_name: str
-    average_score: Optional[float] = None
+    # average_score is returned as a pair [earned, possible] by the service
+    average_score: Optional[List[float]] = None
 
 class ErrorTypeAnalytics(BaseModel):
     error_type: str
@@ -17,7 +18,8 @@ class CourseAnalytics(BaseModel):
     course_name: str
     total_enrollment: int
     total_submissions: int
-    average_course_score: Optional[float] = None
+    # average_course_score is returned as a pair [earned, possible]
+    average_course_score: Optional[List[float]] = None
     most_misunderstood_topics: List[TopicAnalytics] = []
     common_error_types: List[ErrorTypeAnalytics] = []
 

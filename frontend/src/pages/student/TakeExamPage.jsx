@@ -66,7 +66,7 @@ export function TakeExamPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold">{exam.title}</h1>
-      <p className="text-lg text-gray-600 mb-6">Please answer each question to the best of your ability.</p>
+      <p className="text-lg text-muted-foreground mb-6">Please answer each question to the best of your ability.</p>
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>

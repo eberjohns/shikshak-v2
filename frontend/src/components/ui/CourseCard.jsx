@@ -12,11 +12,11 @@ export function CourseCard({ course, onEnroll, isEnrolled, role = 'student' }) {
     <Card className="flex flex-col">
       <CardHeader>
         <CardTitle>{course.course_name}</CardTitle>
-        <CardDescription>Taught by: {course.teacher?.full_name || 'N/A'}</CardDescription>
+  <CardDescription className="text-muted-foreground">Taught by: {course.teacher?.full_name || 'N/A'}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
         {/* We can add more course details here later, like a description */}
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Click below to view details or manage the course.
         </p>
       </CardContent>

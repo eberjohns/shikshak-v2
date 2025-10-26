@@ -12,6 +12,7 @@ export function StudentCourseDetailPage() {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [exams, setExams] = useState([]);
+  const [attemptedExamIds, setAttemptedExamIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -19,12 +20,16 @@ export function StudentCourseDetailPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [courseRes, examsRes] = await Promise.all([
+        const [courseRes, examsRes, submissionsRes] = await Promise.all([
           apiClient.get(`/courses/${courseId}`),
-          apiClient.get(`/student/courses/${courseId}/exams`)
+          apiClient.get(`/student/courses/${courseId}/exams`),
+          apiClient.get('/student/my-submissions')
         ]);
         setCourse(courseRes.data);
         setExams(examsRes.data);
+        // Find attempted exam IDs
+        const attemptedIds = submissionsRes.data.map(sub => sub.exam.id);
+        setAttemptedExamIds(attemptedIds);
       } catch (err) {
         setError('Failed to fetch course data.');
         console.error(err);
@@ -42,7 +47,7 @@ export function StudentCourseDetailPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold">{course.course_name}</h1>
-      <p className="text-lg text-gray-600 mb-6">Taught by: {course.teacher.full_name}</p>
+      <p className="text-lg text-muted-foreground mb-6">Taught by: {course.teacher.full_name}</p>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
@@ -56,21 +61,25 @@ export function StudentCourseDetailPage() {
           {exams.length > 0 ? (
             <div className="space-y-4">
               {exams.map(exam => (
-                <div key={exam.id} className="p-4 bg-white rounded-lg shadow-sm flex justify-between items-center">
+                <div key={exam.id} className="p-4 bg-card rounded-lg shadow-sm flex justify-between items-center">
                   <div>
                     <h3 className="font-semibold">{exam.title}</h3>
-                    <p className="text-sm text-gray-500">{exam.questions.length} questions</p>
+                    <p className="text-sm text-muted-foreground">{exam.questions.length} questions</p>
                   </div>
-                  <Button asChild>
-                    <Link to={`/student/exams/${exam.id}/take`} state={{ exam: exam }}>
-                      <Pencil className="mr-2 h-4 w-4" /> Take Exam
-                    </Link>
+                  <Button asChild disabled={attemptedExamIds.includes(exam.id)}>
+                    {attemptedExamIds.includes(exam.id) ? (
+                      <span className="flex items-center"><Pencil className="mr-2 h-4 w-4" /> Attempted</span>
+                    ) : (
+                      <Link to={`/student/exams/${exam.id}/take`} state={{ exam: exam }}>
+                        <Pencil className="mr-2 h-4 w-4" /> Take Exam
+                      </Link>
+                    )}
                   </Button>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No exams have been published for this course yet.</p>
+            <p className="text-muted-foreground">No exams have been published for this course yet.</p>
           )}
         </div>
       </div>
